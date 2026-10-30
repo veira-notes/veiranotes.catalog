@@ -18,6 +18,9 @@ website/.next/
 website/build/
 website/.astro/
 
+# Personal Claude Code settings for this PC
+.claude/settings.local.json
+
 # Browser test tool logs
 .playwright-mcp/
 

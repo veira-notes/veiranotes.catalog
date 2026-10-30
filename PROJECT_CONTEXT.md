@@ -80,4 +80,6 @@ Affiliate Automation/
 | 2026-10-29 | The product list stays as the 'Product Sheet' tab in your existing workbook, shared whole with the service account | Your choice for now; moving it to its own spreadsheet is the fallback if the key's reach becomes a concern. |
 | 2026-10-29 | Website uses Astro 7 on its own Node.js 24 LTS install, separate from Hermes' bundled Node | The latest Astro needs a newer Node; keeping the project's Node separate means a Hermes update can't break the site. |
 | 2026-10-29 | The site reads the sheet with a small built-in sign-in (no Google client library) | Fewer packages to maintain; the same code runs locally and on Cloudflare. |
+| 2026-10-30 | Code lives in the private GitHub repo `veira-notes/veiranotes.catalog`, committed as veiranotes <veira.notes@gmail.com> | Keeps this personal project separate from your work account. |
+| 2026-10-30 | The robot key is an encrypted Cloudflare secret; every push to `main` rebuilds the site | Encrypted secrets do reach the Pages build, so the key never needs to be stored in plain text. |
 | 2026-10-29 | The Status column drives publishing: the button shows 'Published' and 'Need to Publish' products, removes 'Archived' ones, and marks 'Need to Publish' as 'Published' after a successful build | One button press keeps the site and the sheet in step. |
