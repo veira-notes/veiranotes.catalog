@@ -16,6 +16,15 @@ Lightweight catalog of promoted Shopee products; each listing links to Shopee vi
 - Design: see `DESIGN_BRIEF.md`. Site text, intro and social links: `src/lib/site.ts`. Colours and fonts: `src/styles/theme.css`. Page: `src/pages/index.astro`. Fonts (Cormorant Garamond, Jost; OFL licence) and social icons (Simple Icons; CC0) are free npm packages served from the site itself.
 - Run locally: copy `.env.example` to `.env` and fill it in, then in this folder run `npm install` once and `npm run dev`. Open http://localhost:4321. Rows that are skipped are listed in the terminal.
 
+## Update flow: the Publish site button (PRD 1.7)
+
+- **Where:** in the product workbook, menu **Catalogue → Publish site**. The script is a Google Apps Script bound to the workbook (Extensions → Apps Script). A copy is kept in `apps-script/Code.gs`, without secrets.
+- **What it does:** remembers which rows are "Need to Publish", triggers a Cloudflare Pages rebuild through a deploy hook, then checks the build every 10 seconds (up to 5 minutes). Only when the build is deployed does it change those rows to "Published" and write today's date (yyyy-mm-dd) in **Published On**. If the build fails or times out, no status changes.
+- **What each rebuild shows:** every "Published" and "Need to Publish" product; "Archived" and other statuses are left out. Rows missing No, Product ID, Product Name or Shopee Affiliate Link are skipped by the site and are not marked Published.
+- **"New" badge:** shows on products being published in this build, and for 14 days after their Published On date. The badge only changes when the site rebuilds.
+- **Secrets:** the deploy hook link and a Cloudflare API token (Account → Cloudflare Pages → Read only) are kept in the script's **Script Properties**: `CF_DEPLOY_HOOK_URL`, `CF_API_TOKEN`, `CF_ACCOUNT_ID`, `CF_PROJECT_NAME`. Never put them in the sheet, docs or repo. Anyone with the deploy hook link can trigger builds; if it leaks, delete the hook in Cloudflare and make a new one.
+- **Sources:** [Pages deploy hooks](https://developers.cloudflare.com/pages/configuration/deploy-hooks/), [Get a Pages deployment (API)](https://developers.cloudflare.com/api/resources/pages/subresources/projects/subresources/deployments/methods/get/)
+
 ## Product sheet (PRD 1.3) – set up 29 October 2026
 
 - **Where:** tab `Product Sheet` in your private Google Sheets workbook. The spreadsheet ID lives in `website/.env` (set up in 1.4), not in this README.

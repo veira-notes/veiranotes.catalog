@@ -11,8 +11,12 @@ const { products } = await loadProducts();
 
 const categories = [...new Set(products.map((p) => p.category).filter(Boolean))].sort((a, b) => a.localeCompare(b));
 
+// "New": being published in this build, or published in the last few days.
+// The publish button fills Published On only after the build, so status covers the first build.
 const now = Date.now();
-const isNew = (d: Date | null) => !!d && now - d.getTime() >= 0 && now - d.getTime() < SITE.newBadgeDays * 86_400_000;
+const isNew = (p: { status: string; publishedOn: Date | null }) =>
+  p.status.toLowerCase() === "need to publish" ||
+  (!!p.publishedOn && now - p.publishedOn.getTime() >= 0 && now - p.publishedOn.getTime() < SITE.newBadgeDays * 86_400_000);
 
 // Shopee's image server has a small thumbnail of each image (about 15 KB instead of 130 KB).
 const thumb = (url: string) => (/susercontent\.com\/file\/[^/?#_]+$/.test(url) ? `${url}_tn` : url);
@@ -83,7 +87,7 @@ const year = new Date().getFullYear();
                   <div class="info">
                     <span class="meta">
                       <span class="number">VN{p.no}</span>
-                      {isNew(p.publishedOn) && <span class="badge">New</span>}
+                      {isNew(p) && <span class="badge">New</span>}
                     </span>
                     <span class="name">{p.name}</span>
                   </div>
