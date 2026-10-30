@@ -1,0 +1,477 @@
+---
+// The catalogue page. Design: website/DESIGN_BRIEF.md
+import "@fontsource/cormorant-garamond/500.css";
+import "@fontsource/cormorant-garamond/500-italic.css";
+import "@fontsource-variable/jost";
+import "../styles/theme.css";
+import { loadProducts } from "../lib/sheet";
+import { SITE, SOCIALS } from "../lib/site";
+
+const { products } = await loadProducts();
+
+const categories = [...new Set(products.map((p) => p.category).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+
+const now = Date.now();
+const isNew = (d: Date | null) => !!d && now - d.getTime() >= 0 && now - d.getTime() < SITE.newBadgeDays * 86_400_000;
+
+// Shopee's image server has a small thumbnail of each image (about 15 KB instead of 130 KB).
+const thumb = (url: string) => (/susercontent\.com\/file\/[^/?#_]+$/.test(url) ? `${url}_tn` : url);
+
+const year = new Date().getFullYear();
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{SITE.title}</title>
+    <meta name="description" content={SITE.description} />
+    <meta property="og:title" content={SITE.title} />
+    <meta property="og:description" content={SITE.description} />
+    <meta name="theme-color" content="#faf7f2" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div class="page" id="top">
+      <header class="intro">
+        <img class="avatar" src={SITE.logo} alt="" width="72" height="72" />
+        <h1 class="wordmark">{SITE.name}</h1>
+        <div class="intro-text">
+          {SITE.intro.map((line) => <p>{line}</p>)}
+        </div>
+        <nav class="socials" aria-label="Social media">
+          {
+            SOCIALS.map((s) => (
+              <a href={s.url} target="_blank" rel="noopener" aria-label={s.label}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d={s.path} /></svg>
+              </a>
+            ))
+          }
+        </nav>
+      </header>
+
+      <div class="controls">
+        <label class="search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+          <input id="search" type="search" placeholder="Search by name or number (e.g. VN25)" autocomplete="off" aria-label="Search products" />
+        </label>
+        <div class="tabs" role="tablist" aria-label="Categories">
+          <button type="button" class="tab" role="tab" aria-selected="true" data-category="">All</button>
+          {
+            categories.map((c) => (
+              <button type="button" class="tab" role="tab" aria-selected="false" data-category={c}>
+                {c}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <main>
+        <ul class="list" id="list">
+          {
+            products.map((p) => (
+              <li data-category={p.category} data-search={`vn${p.no} ${p.no} ${p.name}`.toLowerCase()}>
+                <a class="item" href={p.link} target="_blank" rel="sponsored noopener">
+                  <div class="thumb">
+                    {p.imageUrl ? (
+                      <img src={thumb(p.imageUrl)} alt="" loading="lazy" decoding="async" width="112" height="112" />
+                    ) : (
+                      <span class="thumb-placeholder" aria-hidden="true">v</span>
+                    )}
+                  </div>
+                  <div class="info">
+                    <span class="meta">
+                      <span class="number">VN{p.no}</span>
+                      {isNew(p.publishedOn) && <span class="badge">New</span>}
+                    </span>
+                    <span class="name">{p.name}</span>
+                  </div>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <div class="empty" id="empty" hidden>
+          <p>No products match your search.</p>
+          <button type="button" id="clear">Clear search</button>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <nav class="socials" aria-label="Social media">
+          {
+            SOCIALS.map((s) => (
+              <a href={s.url} target="_blank" rel="noopener" aria-label={s.label}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d={s.path} /></svg>
+              </a>
+            ))
+          }
+        </nav>
+        <p class="footer-note">{SITE.footerNote}</p>
+        <p>© {year} {SITE.name}</p>
+      </footer>
+    </div>
+
+    <button type="button" class="to-top" id="to-top" aria-label="Back to top" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+    </button>
+
+    <script>
+      const search = document.getElementById("search") as HTMLInputElement;
+      const tabs = [...document.querySelectorAll<HTMLButtonElement>(".tab")];
+      const items = [...document.querySelectorAll<HTMLLIElement>("#list > li")];
+      const empty = document.getElementById("empty")!;
+      const toTop = document.getElementById("to-top")!;
+      let category = "";
+
+      function apply() {
+        const q = search.value.trim().toLowerCase().replace(/\s+/g, " ");
+        let shown = 0;
+        for (const li of items) {
+          const ok = (!category || li.dataset.category === category) && (!q || li.dataset.search!.includes(q));
+          li.hidden = !ok;
+          if (ok) shown++;
+        }
+        empty.hidden = shown > 0;
+      }
+
+      search.addEventListener("input", apply);
+      for (const tab of tabs) {
+        tab.addEventListener("click", () => {
+          category = tab.dataset.category ?? "";
+          for (const t of tabs) t.setAttribute("aria-selected", String(t === tab));
+          tab.scrollIntoView({ inline: "nearest", block: "nearest", behavior: "smooth" });
+          apply();
+        });
+      }
+      document.getElementById("clear")!.addEventListener("click", () => {
+        search.value = "";
+        apply();
+        search.focus();
+      });
+
+      const updateToTop = () => (toTop.hidden = window.scrollY < 400);
+      window.addEventListener("scroll", updateToTop, { passive: true });
+      updateToTop();
+      toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  [hidden] {
+    display: none !important;
+  }
+  svg {
+    display: block;
+  }
+</style>
+
+<style>
+  .page {
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  /* Header */
+  .intro {
+    text-align: center;
+    padding: 28px 0 16px;
+  }
+  .avatar {
+    display: block;
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    object-fit: cover;
+  }
+  .wordmark {
+    margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 28px;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+  }
+  .intro-text p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .intro-text p:first-child {
+    color: var(--text);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 17px;
+    margin-bottom: 4px;
+  }
+  .socials {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .socials a {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    display: grid;
+    place-items: center;
+    color: var(--text);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .socials a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .socials svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+
+  /* Search and tabs, pinned while scrolling */
+  .controls {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg);
+    padding: 12px 0 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+  .search:focus-within {
+    border-color: var(--accent);
+  }
+  .search svg {
+    width: 18px;
+    height: 18px;
+    flex: none;
+    fill: none;
+    stroke: var(--muted);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  .search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 16px; /* 16px stops iPhones zooming in */
+    color: var(--text);
+  }
+  .search input::placeholder {
+    color: var(--muted);
+  }
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .tab {
+    flex: none;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .tab[aria-selected="true"] {
+    background: var(--mocha);
+    border-color: var(--mocha);
+    color: var(--bg);
+  }
+
+  /* Product list */
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 8px 0 0;
+  }
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    color: inherit;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .item:active {
+    opacity: 0.7;
+  }
+  .thumb {
+    flex: none;
+    width: 112px;
+    height: 112px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--placeholder);
+  }
+  .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .thumb-placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 36px;
+    color: var(--accent);
+  }
+  .info {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .number {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+  .badge {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--accent-text);
+  }
+  .name {
+    font-size: 15px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .item:hover .name {
+    color: var(--accent);
+  }
+
+  .empty {
+    text-align: center;
+    padding: 40px 0;
+    color: var(--muted);
+  }
+  .empty button {
+    height: 40px;
+    padding: 0 18px;
+    border-radius: 999px;
+    border: 1px solid var(--text);
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 32px 0 48px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .footer .socials {
+    margin: 0 0 16px;
+  }
+  .footer p {
+    margin: 4px auto;
+    max-width: 34ch;
+  }
+  .footer .footer-note {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 17px;
+    line-height: 1.4;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  /* Back to top */
+  .to-top {
+    position: fixed;
+    right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    z-index: 100;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 0;
+    background: var(--text);
+    color: var(--bg);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(43, 40, 37, 0.18);
+  }
+  .to-top svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+</style>

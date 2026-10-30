@@ -1,0 +1,19 @@
+/* Brand tokens. Placeholder palette until Brand Identity is ready:
+   change colours and fonts here only. */
+:root {
+  --bg: #faf7f2;          /* warm ivory */
+  --surface: #ffffff;
+  --text: #2b2825;        /* soft charcoal */
+  --muted: #7b736a;
+  --line: #ebe5dc;
+  --accent: #8a6b43;      /* muted gold-taupe */
+  --accent-text: #ffffff;
+  --mocha: #403329;       /* deep mocha: selected category */
+  --placeholder: #efe9e0;
+
+  --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-body: "Jost Variable", "Helvetica Neue", Arial, sans-serif;
+
+  --radius: 14px;
+  --page-width: 560px;
+}
