@@ -11,12 +11,12 @@ const { products } = await loadProducts();
 
 const categories = [...new Set(products.map((p) => p.category).filter(Boolean))].sort((a, b) => a.localeCompare(b));
 
-// "New": being published in this build, or published in the last few days.
-// The publish button fills Published On only after the build, so status covers the first build.
-const now = Date.now();
-const isNew = (p: { status: string; publishedOn: Date | null }) =>
-  p.status.toLowerCase() === "need to publish" ||
-  (!!p.publishedOn && now - p.publishedOn.getTime() >= 0 && now - p.publishedOn.getTime() < SITE.newBadgeDays * 86_400_000);
+// "New" is decided in the visitor's browser from this date, so the badge expires on time
+// without a rebuild. The publish button fills Published On only after the build, so a
+// product being published in this build counts from today.
+const buildDay = new Date().toISOString().slice(0, 10);
+const publishedDay = (p: { status: string; publishedOn: Date | null }) =>
+  p.status.toLowerCase() === "need to publish" ? buildDay : (p.publishedOn?.toISOString().slice(0, 10) ?? "");
 
 // Shopee's image server has a small thumbnail of each image (about 15 KB instead of 130 KB).
 const thumb = (url: string) => (/susercontent\.com\/file\/[^/?#_]+$/.test(url) ? `${url}_tn` : url);
@@ -72,10 +72,14 @@ const year = new Date().getFullYear();
       </div>
 
       <main>
-        <ul class="list" id="list">
+        <ul class="list" id="list" data-new-days={SITE.newBadgeDays}>
           {
             products.map((p) => (
-              <li data-category={p.category} data-search={`vn${p.no} ${p.no} ${p.name}`.toLowerCase()}>
+              <li
+                data-category={p.category}
+                data-search={`vn${p.no} ${p.no} ${p.name}`.toLowerCase()}
+                data-published={publishedDay(p)}
+              >
                 <a class="item" href={p.link} target="_blank" rel="sponsored noopener">
                   <div class="thumb">
                     {p.imageUrl ? (
@@ -87,7 +91,7 @@ const year = new Date().getFullYear();
                   <div class="info">
                     <span class="meta">
                       <span class="number">VN{p.no}</span>
-                      {isNew(p) && <span class="badge">New</span>}
+                      {publishedDay(p) && <span class="badge" hidden>New</span>}
                     </span>
                     <span class="name">{p.name}</span>
                   </div>
@@ -128,6 +132,16 @@ const year = new Date().getFullYear();
       const empty = document.getElementById("empty")!;
       const toTop = document.getElementById("to-top")!;
       let category = "";
+
+      // Show "New" for products published within the last few days, counted from today.
+      const newDays = Number(document.getElementById("list")!.dataset.newDays);
+      for (const li of items) {
+        const day = li.dataset.published;
+        const badge = li.querySelector<HTMLElement>(".badge");
+        if (!day || !badge) continue;
+        const age = (Date.now() - new Date(`${day}T00:00:00`).getTime()) / 86_400_000;
+        badge.hidden = !(age >= 0 && age < newDays);
+      }
 
       function apply() {
         const q = search.value.trim().toLowerCase().replace(/\s+/g, " ");
