@@ -82,4 +82,5 @@ Affiliate Automation/
 | 2026-10-29 | The site reads the sheet with a small built-in sign-in (no Google client library) | Fewer packages to maintain; the same code runs locally and on Cloudflare. |
 | 2026-10-30 | Code lives in the private GitHub repo `veira-notes/veiranotes.catalog`, committed as veiranotes <veira.notes@gmail.com> | Keeps this personal project separate from your work account. |
 | 2026-10-30 | The robot key is an encrypted Cloudflare secret; every push to `main` rebuilds the site | Encrypted secrets do reach the Pages build, so the key never needs to be stored in plain text. |
+| 2026-11-02 | The publish script keeps its memory of the last publish in a hidden '_Site Snapshot' tab of the workbook | Lets each publish log what was added, changed and removed without a database or paid service. |
 | 2026-10-29 | The Status column drives publishing: the button shows 'Published' and 'Need to Publish' products, removes 'Archived' ones, and marks 'Need to Publish' as 'Published' after a successful build | One button press keeps the site and the sheet in step. |

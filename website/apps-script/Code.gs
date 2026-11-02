@@ -6,8 +6,20 @@
 //   CF_ACCOUNT_ID       Cloudflare account ID
 //   CF_PROJECT_NAME     Pages project name (veiranotes)
 // Logs: Extensions → Apps Script → Executions → click a run. Secrets are never logged.
+// The hidden tab "_Site Snapshot" holds what the site showed after the last successful publish,
+// so each publish can log what it adds, changes and removes. Don't edit it by hand.
 
 const SHEET_NAME = 'Product Sheet';
+const SNAPSHOT_SHEET = '_Site Snapshot';
+// The product fields the site shows: [key, column title].
+const SITE_FIELDS = [
+  ['id', 'Product ID'],
+  ['no', 'No'],
+  ['name', 'Product Name'],
+  ['image', 'Image URL'],
+  ['category', 'Category'],
+  ['link', 'Shopee Affiliate Link'],
+];
 const NEED_TO_PUBLISH = 'Need to Publish';
 const PUBLISHED = 'Published';
 const PUBLISHED_ON = 'Published On';
@@ -77,6 +89,21 @@ function publishSite() {
     log('To be newly listed (' + toPublish.length + '): ' + (toPublish.map((p) => p.label).join('; ') || 'none'));
     if (incomplete.length) log('Skipped, incomplete (missing No, Product ID, Product Name or link): rows ' + JSON.stringify(incomplete));
 
+    // Compare what the site will show after this build with the last successful publish.
+    const liveAfter = siteProducts(data, col);
+    const previous = readSnapshot(book);
+    let changes = null;
+    if (previous) {
+      changes = diffProducts(previous.products, liveAfter);
+      log('Compared with the last publish (' + previous.savedAt + '): ' + changes.added.length + ' added, ' +
+        changes.changed.length + ' changed, ' + changes.removed.length + ' removed, ' + Object.keys(liveAfter).length + ' on the site after this build.');
+      changes.added.forEach((p) => log('  Added: ' + productLabel(p)));
+      changes.changed.forEach((c) => log('  Changed: ' + productLabel(c.product) + ': ' + c.what.join('; ')));
+      changes.removed.forEach((p) => log('  Removed: ' + productLabel(p)));
+    } else {
+      log('No snapshot of an earlier publish yet. This run saves the first one; changes are listed from the next publish.');
+    }
+
     const started = new Date();
     notice('Rebuilding the site. This usually takes 1–2 minutes…', -1);
     const hook = UrlFetchApp.fetch(props.CF_DEPLOY_HOOK_URL, { method: 'post', muteHttpExceptions: true });
@@ -115,8 +142,15 @@ function publishSite() {
     log('Newly listed on the site and marked "' + PUBLISHED + '" at ' + stamp + ' (' + marked.length + '): ' +
       (marked.map((p) => p.label).join('; ') || 'none'));
 
+    saveSnapshot(book, liveAfter, stamp);
+    log('Saved the snapshot of ' + Object.keys(liveAfter).length + ' live products for the next comparison.');
+
     let message = 'The site is updated. ' + marked.length + ' product(s) newly listed' +
       (marked.length ? ': ' + marked.map((p) => p.label.split(' – ')[0]).join(', ') : '') + '.';
+    if (changes) {
+      message += ' Since the last publish: ' + changes.added.length + ' added, ' + changes.changed.length +
+        ' changed, ' + changes.removed.length + ' removed (details in the log).';
+    }
     if (incomplete.length) {
       message += ' Not published (missing No, Product ID, Product Name or Shopee Affiliate Link): row ' +
         incomplete.join(', ') + '.';
@@ -140,6 +174,8 @@ function columnIndex(sheet) {
     no: find('No'),
     id: find('Product ID'),
     name: find('Product Name'),
+    image: find('Image URL'), // optional
+    category: find('Category'), // optional
     link: find('Shopee Affiliate Link'),
     status: find('Status'),
     publishedOn: find(PUBLISHED_ON),
@@ -148,6 +184,80 @@ function columnIndex(sheet) {
     if (!col[k]) throw new Error('A required column is missing in "' + SHEET_NAME + '": ' + k + '.');
   });
   return col;
+}
+
+// The products the site will show, keyed by Product ID: "Published" or "Need to Publish" rows
+// that have No, Product ID, Product Name and link, skipping repeated numbers or IDs (as the site does).
+function siteProducts(data, col) {
+  const products = {};
+  const seenNos = {};
+  data.forEach((r) => {
+    const status = String(r[col.status - 1]).trim();
+    if (status !== PUBLISHED && status !== NEED_TO_PUBLISH) return;
+    const p = {};
+    SITE_FIELDS.forEach(([key]) => { p[key] = col[key] ? String(r[col[key] - 1]).trim() : ''; });
+    if (!/^\d+$/.test(p.no) || !p.id || !p.name || !p.link) return;
+    if (products[p.id] || seenNos[p.no]) return;
+    seenNos[p.no] = true;
+    products[p.id] = p;
+  });
+  return products;
+}
+
+function productLabel(p) {
+  return 'VN' + p.no + ' – ' + p.name;
+}
+
+// Lists products added, removed and changed between two snapshots. A changed Product ID
+// shows as one removed and one added product, because the ID is how products are matched.
+function diffProducts(before, after) {
+  const added = [];
+  const removed = [];
+  const changed = [];
+  Object.keys(after).forEach((id) => {
+    const a = before[id];
+    const b = after[id];
+    if (!a) return added.push(b);
+    const what = [];
+    if (a.no !== b.no) what.push('number VN' + a.no + ' → VN' + b.no);
+    if (a.name !== b.name) what.push('name "' + a.name + '" → "' + b.name + '"');
+    if (a.image !== b.image) what.push('image changed');
+    if (a.category !== b.category) what.push('category "' + a.category + '" → "' + b.category + '"');
+    if (a.link !== b.link) what.push('Shopee link changed');
+    if (what.length) changed.push({ product: b, what: what });
+  });
+  Object.keys(before).forEach((id) => { if (!after[id]) removed.push(before[id]); });
+  return { added: added, removed: removed, changed: changed };
+}
+
+// Reads the hidden snapshot tab. Returns null if there is no earlier publish to compare with.
+function readSnapshot(book) {
+  const sheet = book.getSheetByName(SNAPSHOT_SHEET);
+  if (!sheet || sheet.getLastRow() < 2) return null;
+  const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, SITE_FIELDS.length + 1).getValues();
+  const products = {};
+  rows.forEach((r) => {
+    const p = {};
+    SITE_FIELDS.forEach(([key], i) => { p[key] = String(r[i]).trim(); });
+    if (p.id) products[p.id] = p;
+  });
+  return { products: products, savedAt: String(rows[0][SITE_FIELDS.length]) };
+}
+
+// Replaces the hidden snapshot tab with the products now on the site.
+function saveSnapshot(book, products, savedAt) {
+  let sheet = book.getSheetByName(SNAPSHOT_SHEET);
+  if (!sheet) {
+    sheet = book.insertSheet(SNAPSHOT_SHEET);
+    sheet.hideSheet();
+  }
+  sheet.clearContents();
+  const values = [SITE_FIELDS.map(([, title]) => title).concat('Saved At')];
+  Object.keys(products).forEach((id) => {
+    values.push(SITE_FIELDS.map(([key]) => products[id][key]).concat(savedAt));
+  });
+  // Plain text, so numbers and links are stored exactly as typed.
+  sheet.getRange(1, 1, values.length, values[0].length).setNumberFormat('@').setValues(values);
 }
 
 // Finds the build the hook started and waits for it, until the deadline.
