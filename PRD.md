@@ -1,7 +1,7 @@
 # Automated Shopee Affiliate Marketing Ecosystem – PRD
 
 ## 1. Status
-**Status:** Approved · **Current:** Phase 2.1 (in progress) · **Updated:** 2026-11-02
+**Status:** Approved · **Current:** Phase 2.2 (in progress) · **Updated:** 2026-11-02
 Catalogue website online first, then the core automation tools → see PROJECT_CONTEXT.md
 **Now:** The project folder is set up (2026-10-24). Claude Code CLI is installed, and it loads CLAUDE.md, PROJECT_CONTEXT.md and PRD.md at session start (1.1, 2026-10-28). The Shopee Affiliate account is approved and active. Hosting and Shopee rules checked (1.2, 2026-10-29); Shopee still has to approve the website before it goes in your bios. The private product sheet holds 3 products and a Google service account can read it (1.3, 2026-10-29). The Astro site (7.4.4) is scaffolded in `website/` and reads the sheet locally (1.4, 2026-10-29), and the veiranotes catalogue design is built and approved (1.5, 2026-10-29); Node.js 24.22.2 LTS is installed in `AppData\Local\Programs\nodejs`, ahead of Hermes' bundled Node on the user PATH. Hermes Agent CLI (v0.18.0) was already installed before this plan; the Hermes Desktop install failed and is checked in Phase 3. The website is live at https://veiranotes.pages.dev, built by Cloudflare Pages from the private GitHub repo `veira-notes/veiranotes.catalog` (1.6, 2026-10-30). The 'Publish site' button works (1.7, 2026-11-02): the sheet now holds 17 live products, and the script logs each step, writes Published On with the time, and logs what was added, changed and removed since the last publish (hidden '_Site Snapshot' tab). Shopee approved the site, and it is linked in your Instagram and Threads bios (1.8, 2026-11-02). Hermes Desktop, n8n and the tunnel are not set up yet.
 
@@ -26,7 +26,7 @@ Goal: A live catalogue you fill from a Google Sheet, linked in your bios. · Cov
 
 ### Phase 2 – Quick checks
 Goal: Answer the two questions that could change the automation plan, before installing anything. · Covers: R4, R7 · Est: ~2 hours
-- [ ] 2.1 Check that Hermes may run your local Claude Code CLI on your subscription – done when: `hermes/README.md` records yes or no, with links to current official Anthropic and Hermes docs. If no, stop and choose a fallback together.
+- [x] 2.1 Check that Hermes may run your local Claude Code CLI on your subscription – done when: `hermes/README.md` records yes or no, with links to current official Anthropic and Hermes docs. If no, stop and choose a fallback together. Result (2026-11-02): yes, for personal use on this PC, with Claude Code keeping its own sign-in, no API key and extra usage off; usage counts against your plan limits. Sources and rules in `hermes/README.md`.
 - [ ] 2.2 Check what programmatic access Shopee Affiliate (Indonesia) offers for affiliate links and product data, and how to get it – done when: `integrations/README.md` records the findings with official sources.
 🔒 Gate: approval before Phase 3
 
@@ -76,7 +76,7 @@ Goal: Know what each service allows before building automation. · Depends on: 2
 - **[Assumption]** Hermes, installed on Windows by the desktop installer, can run your Windows Claude Code CLI; fallback: run both in WSL2 · confirm in 3.4
 
 ## 5. Next action
-2.1 in progress: check, against current official Anthropic and Hermes docs, whether Hermes may run your local Claude Code CLI on your subscription; record yes or no in `hermes/README.md`.
+2.2 in progress: find out what programmatic access Shopee Affiliate (Indonesia) offers for affiliate links and product data, and how to get it; record it in `integrations/README.md`.
 
 ## 6. Change log
 - 2026-10-26 – PRD created from the old PROJECT_CONTEXT.md Phase 1 checklist. Nothing ticked, because no item has been verified yet.
