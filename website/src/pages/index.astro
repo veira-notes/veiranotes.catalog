@@ -18,8 +18,13 @@ const buildDay = new Date().toISOString().slice(0, 10);
 const publishedDay = (p: { status: string; publishedOn: Date | null }) =>
   p.status.toLowerCase() === "need to publish" ? buildDay : (p.publishedOn?.toISOString().slice(0, 10) ?? "");
 
-// Shopee's image server has a small thumbnail of each image (about 15 KB instead of 130 KB).
-const thumb = (url: string) => (/susercontent\.com\/file\/[^/?#_]+$/.test(url) ? `${url}_tn` : url);
+// Shopee's image server has a small thumbnail of each image (10–40 KB instead of 100–800 KB),
+// at <host>/file/<image id>_tn. Pasted links come with extras such as ".webp" or
+// "@resize_w900_nl.webp", so the thumbnail is built from the image id alone.
+const thumb = (url: string) => {
+  const m = url.match(/^(https:\/\/[^/]*susercontent\.com\/file\/)([A-Za-z0-9-]+)/);
+  return m ? `${m[1]}${m[2]}_tn` : url;
+};
 
 const year = new Date().getFullYear();
 ---
@@ -84,7 +89,16 @@ const year = new Date().getFullYear();
                 <a class="item" href={p.link} target="_blank" rel="sponsored noopener">
                   <div class="thumb">
                     {p.imageUrl ? (
-                      <img src={thumb(p.imageUrl)} alt="" loading="lazy" decoding="async" width="112" height="112" />
+                      <img
+                        src={thumb(p.imageUrl)}
+                        data-full={p.imageUrl}
+                        onerror="this.onerror=null;this.src=this.dataset.full"
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        width="112"
+                        height="112"
+                      />
                     ) : (
                       <span class="thumb-placeholder" aria-hidden="true">v</span>
                     )}
