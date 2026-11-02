@@ -71,7 +71,7 @@ Goal: Know what each service allows before building automation. · Depends on: 2
 - **[Risk]** Anthropic changed its rules on subscription use in third-party tools several times in 2026 → mitigation: checked in 2.1 and re-checked before later milestones rely on it; fallback: use Claude Code directly, outside Hermes · blocks 3.4
 - **[Risk]** Hermes Desktop is a public preview, so expect bugs → mitigation: the CLI and web dashboard use the same install as a fallback · affects Phase 3
 - **[Risk]** OpenRouter free models have usage limits and uneven tool-use quality → mitigation: tested in 3.2–3.3; fallback: Gemini free tier · blocks Phase 3
-- **[Risk]** Shopee may not offer programmatic affiliate link generation in Indonesia → mitigation: found early in 2.2; manual links in the sheet keep working · affects later milestones
+- **[Risk]** Shopee's Affiliate Open API exists for Indonesia (links, product offers, reports), but access is by approval with no public way to apply, and your account has no access yet (2.2) → mitigation: ask Shopee Affiliate support how to request access; manual links in the sheet keep working; no unofficial scrapers (terms clause 6.3(i)) · affects later milestones
 - **[Risk]** Webhooks and scheduled jobs only work while this PC is on (the website doesn't depend on it) → acceptable for this milestone; long-term host is in 'Later'
 - **[Assumption]** Hermes, installed on Windows by the desktop installer, can run your Windows Claude Code CLI; fallback: run both in WSL2 · confirm in 3.4
 
