@@ -16,7 +16,7 @@ Premium and elegant, but clean and simple. It should feel feminine, modern and c
 - **Colours:** warm ivory background, soft charcoal text, and one muted gold-taupe accent for buttons and the "New" badge. This is a placeholder palette until your Brand Identity is ready. All colours and fonts sit in one file, so we can swap them in minutes.
 - **Fonts:** an elegant serif for the name and headings, and a clean sans-serif for everything else. Both are free and served from the site itself, so there are no outside font requests.
 - **Selected category tab:** Deep Mocha (#403329) with ivory text.
-- **Sizes:** a compact header (small logo and wordmark) so products show sooner, and large square product images (112 px) with the number sitting tight above the name.
+- **Sizes:** a compact header (small logo and wordmark) so products show sooner, and large square product images (140 px, filling most of each row, with a 6 px gap above and below) with the number sitting tight above the name.
 - **Space:** generous white space, thin dividers and soft rounded corners. No heavy shadows and no clutter.
 
 ## 4. Page layout (one page, top to bottom)
