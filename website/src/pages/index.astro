@@ -89,16 +89,20 @@ const year = new Date().getFullYear();
                 <a class="item" href={p.link} target="_blank" rel="sponsored noopener">
                   <div class="thumb">
                     {p.imageUrl ? (
-                      <img
-                        src={thumb(p.imageUrl)}
-                        data-full={p.imageUrl}
-                        onerror="this.onerror=null;this.src=this.dataset.full"
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
-                        width="112"
-                        height="112"
-                      />
+                      <>
+                        {/* If the thumbnail fails, try the pasted link; if that fails too, show the placeholder. */}
+                        <img
+                          src={thumb(p.imageUrl)}
+                          data-full={p.imageUrl}
+                          onerror="if(this.src!==this.dataset.full){this.src=this.dataset.full}else{this.onerror=null;this.hidden=true;this.nextElementSibling.hidden=false}"
+                          alt=""
+                          loading="lazy"
+                          decoding="async"
+                          width="112"
+                          height="112"
+                        />
+                        <span class="thumb-placeholder" aria-hidden="true" hidden>v</span>
+                      </>
                     ) : (
                       <span class="thumb-placeholder" aria-hidden="true">v</span>
                     )}

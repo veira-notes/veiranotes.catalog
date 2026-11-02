@@ -50,7 +50,7 @@ Premium and elegant, but clean and simple. It should feel feminine, modern and c
 - **Product number:** "VN" plus your **No** column, with no space and no leading zeros (e.g. VN1, VN25, VN1859). The Product ID itself isn't shown. A row with an empty or non-numeric No is skipped, and so is a duplicate No.
 - **"New" badge:** shows for 14 days after a product is published. The date comes from a new **Published On** column, which the publish button fills in (PRD 1.7). Until 1.7 is set up, no badges show.
 - **Not shown:** price, category (except in the tabs), short description, Product ID, Status, and any test or debug text.
-- **Missing image:** a soft placeholder with a "v" monogram.
+- **Missing or broken image:** a soft placeholder with a "v" monogram. This shows when Image URL is empty, or when both Shopee's thumbnail and the pasted link fail to load (for example, the seller removed the photo).
 - **No results:** "No products match your search", with a button to clear it.
 
 ## 6. Quality bar
