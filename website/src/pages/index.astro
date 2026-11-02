@@ -79,6 +79,7 @@ const year = new Date().getFullYear();
                 data-category={p.category}
                 data-search={`vn${p.no} ${p.no} ${p.name}`.toLowerCase()}
                 data-published={publishedDay(p)}
+                data-no={p.no}
               >
                 <a class="item" href={p.link} target="_blank" rel="sponsored noopener">
                   <div class="thumb">
@@ -133,15 +134,25 @@ const year = new Date().getFullYear();
       const toTop = document.getElementById("to-top")!;
       let category = "";
 
-      // Show "New" for products published within the last few days, counted from today.
-      const newDays = Number(document.getElementById("list")!.dataset.newDays);
+      // Show "New" for products published within the last few days, counted from today,
+      // and move them to the top: most recently published first, then higher number.
+      // The rest keep the build order (number, highest first).
+      const list = document.getElementById("list")!;
+      const newDays = Number(list.dataset.newDays);
+      const fresh: HTMLLIElement[] = [];
+      const rest: HTMLLIElement[] = [];
       for (const li of items) {
         const day = li.dataset.published;
         const badge = li.querySelector<HTMLElement>(".badge");
-        if (!day || !badge) continue;
-        const age = (Date.now() - new Date(`${day}T00:00:00`).getTime()) / 86_400_000;
-        badge.hidden = !(age >= 0 && age < newDays);
+        const age = day ? (Date.now() - new Date(`${day}T00:00:00`).getTime()) / 86_400_000 : -1;
+        const isNew = !!badge && age >= 0 && age < newDays;
+        if (badge) badge.hidden = !isNew;
+        (isNew ? fresh : rest).push(li);
       }
+      fresh.sort(
+        (a, b) => b.dataset.published!.localeCompare(a.dataset.published!) || Number(b.dataset.no) - Number(a.dataset.no),
+      );
+      list.append(...fresh, ...rest);
 
       function apply() {
         const q = search.value.trim().toLowerCase().replace(/\s+/g, " ");
