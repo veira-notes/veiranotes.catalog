@@ -1,5 +1,5 @@
 # Automated Shopee Affiliate Marketing Ecosystem – Project Context
-_Last updated: 2026-10-29 · Plan: see PRD.md_
+_Last updated: 2026-11-02 · Plan: see PRD.md_
 
 ## 1. Summary
 A personal, AI-assisted affiliate system centred on Shopee. It finds products, manages affiliate links, writes marketing content and publishes it to Threads, X, Instagram, TikTok, Shopee and a catalogue website, with as little manual work as possible. The current milestone puts the catalogue website online first, so selling can start, then sets up the automation tools.
