@@ -16,7 +16,7 @@ Goal of the current milestone: the catalogue website is live and selling, and th
 ## 3. Scope
 - **In:** Catalogue website live on a free address, with products added by hand in a Google Sheet; Hermes Desktop and Claude Code access; self-hosted n8n on this PC; secure HTTPS webhooks; integration research (notes only).
 - **Out:** Scaling (high traffic, speed tuning); anything that needs a paid service.
-- **Later:** Custom domain (adds a yearly cost); automated product discovery; content generation workflows; social media auto-posting; n8n adding products to the sheet; long-term n8n host (always-on PC vs. VPS).
+- **Later:** TikTok bio link to the site (once the account has 1,000 followers or is a business account); custom domain (adds a yearly cost); automated product discovery; content generation workflows; social media auto-posting; n8n adding products to the sheet; long-term n8n host (always-on PC vs. VPS).
 - **Constraints:** $0/month (free tiers only) · Claude via Pro/Max subscription only, no API key · Windows x64 PC · website in English · no secrets in docs or the repo.
 
 ## 4. Requirements
@@ -83,4 +83,5 @@ Affiliate Automation/
 | 2026-10-30 | Code lives in the private GitHub repo `veira-notes/veiranotes.catalog`, committed as veiranotes <veira.notes@gmail.com> | Keeps this personal project separate from your work account. |
 | 2026-10-30 | The robot key is an encrypted Cloudflare secret; every push to `main` rebuilds the site | Encrypted secrets do reach the Pages build, so the key never needs to be stored in plain text. |
 | 2026-11-02 | The publish script keeps its memory of the last publish in a hidden '_Site Snapshot' tab of the workbook | Lets each publish log what was added, changed and removed without a database or paid service. |
+| 2026-11-02 | The site is linked from the Instagram and Threads bios now; the TikTok bio link waits until the account qualifies | TikTok only allows a website link with 1,000 followers or a business account (per third-party guides). |
 | 2026-10-29 | The Status column drives publishing: the button shows 'Published' and 'Need to Publish' products, removes 'Archived' ones, and marks 'Need to Publish' as 'Published' after a successful build | One button press keeps the site and the sheet in step. |
