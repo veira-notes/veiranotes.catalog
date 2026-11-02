@@ -11,6 +11,8 @@ const SHEET_NAME = 'Product Sheet';
 const NEED_TO_PUBLISH = 'Need to Publish';
 const PUBLISHED = 'Published';
 const PUBLISHED_ON = 'Published On';
+// Published On is written as yyyy-MM-dd HH:mm in Jakarta time (UTC+7); the site reads it the same way.
+const TIME_ZONE = 'Asia/Jakarta';
 const POLL_MS = 10 * 1000;
 // Google stops any run after 6 minutes, so the whole run must finish well before that.
 const RUN_BUDGET_MS = 4.5 * 60 * 1000;
@@ -57,17 +59,23 @@ function publishSite() {
     // Snapshot the rows to publish now, so rows changed during the build are left alone.
     const lastRow = sheet.getLastRow();
     const data = lastRow < 2 ? [] : sheet.getRange(2, 1, lastRow - 1, sheet.getLastColumn()).getValues();
-    const toPublish = [];
-    const incomplete = [];
+    const toPublish = []; // { row, label } of complete "Need to Publish" rows
+    const incomplete = []; // row numbers of "Need to Publish" rows the site will skip
+    const statusCount = {};
+    const describe = (r, row) => 'VN' + String(r[col.no - 1]).trim() + ' – ' + String(r[col.name - 1]).trim() + ' (row ' + row + ')';
     data.forEach((r, i) => {
-      if (String(r[col.status - 1]).trim() !== NEED_TO_PUBLISH) return;
+      const status = String(r[col.status - 1]).trim() || '(empty)';
+      if (String(r[col.id - 1]).trim() || String(r[col.name - 1]).trim()) statusCount[status] = (statusCount[status] || 0) + 1;
+      if (status !== NEED_TO_PUBLISH) return;
       // Same rule as the site: rows missing these are skipped there, so don't mark them Published.
       const complete = /^\d+$/.test(String(r[col.no - 1]).trim()) &&
         [col.id, col.name, col.link].every((c) => String(r[c - 1]).trim() !== '');
-      (complete ? toPublish : incomplete).push(i + 2);
+      if (complete) toPublish.push({ row: i + 2, label: describe(r, i + 2) });
+      else incomplete.push(i + 2);
     });
-    log('Rows marked "' + NEED_TO_PUBLISH + '": to publish ' + JSON.stringify(toPublish) +
-      ', incomplete ' + JSON.stringify(incomplete));
+    log('Products by status: ' + JSON.stringify(statusCount));
+    log('To be newly listed (' + toPublish.length + '): ' + (toPublish.map((p) => p.label).join('; ') || 'none'));
+    if (incomplete.length) log('Skipped, incomplete (missing No, Product ID, Product Name or link): rows ' + JSON.stringify(incomplete));
 
     const started = new Date();
     notice('Rebuilding the site. This usually takes 1–2 minutes…', -1);
@@ -92,21 +100,23 @@ function publishSite() {
       return;
     }
 
-    const today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd');
+    const stamp = Utilities.formatDate(new Date(), TIME_ZONE, 'yyyy-MM-dd HH:mm');
     const marked = [];
-    toPublish.forEach((row) => {
-      if (String(sheet.getRange(row, col.status).getValue()).trim() !== NEED_TO_PUBLISH) {
-        log('Row ' + row + ' changed during the build; left as it is.');
+    toPublish.forEach((p) => {
+      if (String(sheet.getRange(p.row, col.status).getValue()).trim() !== NEED_TO_PUBLISH) {
+        log('Changed during the build, left as it is: ' + p.label);
         return;
       }
-      sheet.getRange(row, col.status).setValue(PUBLISHED);
-      // Plain text yyyy-mm-dd, so the site reads the same date whatever the sheet's locale.
-      sheet.getRange(row, col.publishedOn).setNumberFormat('@').setValue(today);
-      marked.push(row);
+      sheet.getRange(p.row, col.status).setValue(PUBLISHED);
+      // Plain text, so the site reads the same value whatever the sheet's locale.
+      sheet.getRange(p.row, col.publishedOn).setNumberFormat('@').setValue(stamp);
+      marked.push(p);
     });
-    log('Marked "' + PUBLISHED + '" with ' + today + ': rows ' + JSON.stringify(marked));
+    log('Newly listed on the site and marked "' + PUBLISHED + '" at ' + stamp + ' (' + marked.length + '): ' +
+      (marked.map((p) => p.label).join('; ') || 'none'));
 
-    let message = 'The site is updated. ' + marked.length + ' product(s) marked Published.';
+    let message = 'The site is updated. ' + marked.length + ' product(s) newly listed' +
+      (marked.length ? ': ' + marked.map((p) => p.label.split(' – ')[0]).join(', ') : '') + '.';
     if (incomplete.length) {
       message += ' Not published (missing No, Product ID, Product Name or Shopee Affiliate Link): row ' +
         incomplete.join(', ') + '.';

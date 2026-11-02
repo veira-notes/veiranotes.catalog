@@ -18,7 +18,7 @@ export type Product = {
   description: string;
   link: string;
   status: string;
-  publishedOn: Date | null;
+  publishedOn: string | null; // "yyyy-mm-dd hh:mm", Jakarta time
 };
 
 export type SkippedRow = { row: number; reason: string };
@@ -79,12 +79,16 @@ async function getAccessToken(key: ServiceAccountKey): Promise<string> {
 
 const clean = (v: unknown) => String(v ?? "").trim();
 
-// Accepts 2026-10-29 or 29/10/2026 (day first, as Indonesian sheets show it).
-function parseDate(v: string): Date | null {
-  let m = v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-  if (m) return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
-  m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-  if (m) return new Date(Date.UTC(+m[3], +m[2] - 1, +m[1]));
+// Reads Published On as Jakarta local time and returns it as "yyyy-mm-dd hh:mm".
+// Accepts 2026-10-29 14:05, 2026-10-29 (taken as 00:00) or 29/10/2026 (day first,
+// as Indonesian sheets show it), each with an optional time.
+function parseDate(v: string): string | null {
+  const pad = (n: string) => n.padStart(2, "0");
+  const time = (h?: string, min?: string) => (h ? `${pad(h)}:${min}` : "00:00");
+  let m = v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T](\d{1,2}):(\d{2}))?/);
+  if (m) return `${m[1]}-${pad(m[2])}-${pad(m[3])} ${time(m[4], m[5])}`;
+  m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/);
+  if (m) return `${m[3]}-${pad(m[2])}-${pad(m[1])} ${time(m[4], m[5])}`;
   return null;
 }
 

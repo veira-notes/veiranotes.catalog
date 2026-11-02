@@ -46,7 +46,7 @@ Premium and elegant, but clean and simple. It should feel feminine, modern and c
 5. **Back-to-top button:** a round up-arrow button fixed at the bottom right, above everything else. It appears once the visitor scrolls down and brings them back to the top from anywhere on the page.
 
 ## 5. Product rules
-- **Order (updated 2 November 2026):** products with the "New" badge come first, most recently published at the top (same date: higher number first). All other products follow, by your **No** column, highest first. When a badge expires, that product drops back to its number position without a rebuild.
+- **Order (updated 2 November 2026):** products with the "New" badge come first, most recently published at the top, by Published On date and time (same time: higher number first). All other products follow, by your **No** column, highest first. When a badge expires, that product drops back to its number position without a rebuild.
 - **Product number:** "VN" plus your **No** column, with no space and no leading zeros (e.g. VN1, VN25, VN1859). The Product ID itself isn't shown. A row with an empty or non-numeric No is skipped, and so is a duplicate No.
 - **"New" badge:** shows for 14 days after a product is published. The date comes from a new **Published On** column, which the publish button fills in (PRD 1.7). Until 1.7 is set up, no badges show.
 - **Not shown:** price, category (except in the tabs), short description, Product ID, Status, and any test or debug text.

@@ -14,9 +14,18 @@ const categories = [...new Set(products.map((p) => p.category).filter(Boolean))]
 // "New" is decided in the visitor's browser from this date, so the badge expires on time
 // without a rebuild. The publish button fills Published On only after the build, so a
 // product being published in this build counts from today.
-const buildDay = new Date().toISOString().slice(0, 10);
-const publishedDay = (p: { status: string; publishedOn: Date | null }) =>
-  p.status.toLowerCase() === "need to publish" ? buildDay : (p.publishedOn?.toISOString().slice(0, 10) ?? "");
+// Times are Jakarta time (UTC+7), the same as the publish button writes.
+const buildTime = new Intl.DateTimeFormat("sv-SE", {
+  timeZone: "Asia/Jakarta",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+}).format(new Date()); // "yyyy-mm-dd hh:mm"
+const publishedDay = (p: { status: string; publishedOn: string | null }) =>
+  p.status.toLowerCase() === "need to publish" ? buildTime : (p.publishedOn ?? "");
 
 // Shopee's image server has a small thumbnail of each image (10–40 KB instead of 100–800 KB),
 // at <host>/file/<image id>_tn. Pasted links come with extras such as ".webp" or
@@ -160,7 +169,8 @@ const year = new Date().getFullYear();
       const fresh: HTMLLIElement[] = [];
       const rest: HTMLLIElement[] = [];
       for (const li of items) {
-        const day = li.dataset.published;
+        // data-published is "yyyy-mm-dd hh:mm": the day sets the badge, the full time sets the order.
+        const day = li.dataset.published?.slice(0, 10);
         const badge = li.querySelector<HTMLElement>(".badge");
         const age = day ? (Date.now() - new Date(`${day}T00:00:00`).getTime()) / 86_400_000 : -1;
         const isNew = !!badge && age >= 0 && age < newDays;
