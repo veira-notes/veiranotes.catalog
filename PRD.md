@@ -1,7 +1,7 @@
 # Automated Shopee Affiliate Marketing Ecosystem – PRD
 
 ## 1. Status
-**Status:** Approved · **Current:** Phase 1 complete · 🔒 Gate: approval before Phase 2 · **Updated:** 2026-11-02
+**Status:** Approved · **Current:** Phase 2.1 (in progress) · **Updated:** 2026-11-02
 Catalogue website online first, then the core automation tools → see PROJECT_CONTEXT.md
 **Now:** The project folder is set up (2026-10-24). Claude Code CLI is installed, and it loads CLAUDE.md, PROJECT_CONTEXT.md and PRD.md at session start (1.1, 2026-10-28). The Shopee Affiliate account is approved and active. Hosting and Shopee rules checked (1.2, 2026-10-29); Shopee still has to approve the website before it goes in your bios. The private product sheet holds 3 products and a Google service account can read it (1.3, 2026-10-29). The Astro site (7.4.4) is scaffolded in `website/` and reads the sheet locally (1.4, 2026-10-29), and the veiranotes catalogue design is built and approved (1.5, 2026-10-29); Node.js 24.22.2 LTS is installed in `AppData\Local\Programs\nodejs`, ahead of Hermes' bundled Node on the user PATH. Hermes Agent CLI (v0.18.0) was already installed before this plan; the Hermes Desktop install failed and is checked in Phase 3. The website is live at https://veiranotes.pages.dev, built by Cloudflare Pages from the private GitHub repo `veira-notes/veiranotes.catalog` (1.6, 2026-10-30). The 'Publish site' button works (1.7, 2026-11-02): the sheet now holds 17 live products, and the script logs each step, writes Published On with the time, and logs what was added, changed and removed since the last publish (hidden '_Site Snapshot' tab). Shopee approved the site, and it is linked in your Instagram and Threads bios (1.8, 2026-11-02). Hermes Desktop, n8n and the tunnel are not set up yet.
 
@@ -65,7 +65,7 @@ Goal: Know what each service allows before building automation. · Depends on: 2
 
 ## 4. Risks & open items
 - **[Risk]** Free hosting terms may rule out affiliate sites (Vercel's free plan already does) → mitigation: checked in 1.2; fallback: another free host whose terms allow it · blocks 1.6
-- **[Risk]** Shopee's terms don't say whether affiliates may show product images on their own website → mitigation: we use Shopee's own image links (no scraping, no copies) and ask Shopee support; fallback: your own photos, or no images · affects 1.5
+- **[Closed 2026-11-02]** ~~Shopee's terms don't say whether affiliates may show product images on their own website~~ → Shopee confirmed it's allowed (your report); we keep using Shopee's own image links, with no scraping or copies
 - **[Closed 2026-11-02]** ~~Shopee may not approve the website as a promotion channel~~ → Shopee approved it (1.8)
 - **[Risk]** The service account can read every tab in the workbook, including 'Income & Expenses', because Google shares whole files → accepted for now; keep the key private (outside the repo, only in Cloudflare's build settings); fallback: move 'Product Sheet' to its own spreadsheet · affects 1.4, 1.6
 - **[Risk]** Anthropic changed its rules on subscription use in third-party tools several times in 2026 → mitigation: checked in 2.1 and re-checked before later milestones rely on it; fallback: use Claude Code directly, outside Hermes · blocks 3.4
@@ -76,7 +76,7 @@ Goal: Know what each service allows before building automation. · Depends on: 2
 - **[Assumption]** Hermes, installed on Windows by the desktop installer, can run your Windows Claude Code CLI; fallback: run both in WSL2 · confirm in 3.4
 
 ## 5. Next action
-Phase 1 gate: upload PRD.md and PROJECT_CONTEXT.md to the claude.ai Project so both copies match, then approve Phase 2 (2.1: check that Hermes may run your Claude Code CLI on your subscription).
+2.1 in progress: check, against current official Anthropic and Hermes docs, whether Hermes may run your local Claude Code CLI on your subscription; record yes or no in `hermes/README.md`.
 
 ## 6. Change log
 - 2026-10-26 – PRD created from the old PROJECT_CONTEXT.md Phase 1 checklist. Nothing ticked, because no item has been verified yet.
@@ -96,3 +96,4 @@ Phase 1 gate: upload PRD.md and PROJECT_CONTEXT.md to the claude.ai Project so b
 - 2026-11-02 – Published On now includes the time (yyyy-MM-dd HH:mm, Jakarta time); the site orders 'New' products by it. The publish log and final notice list the newly listed products. Logging changes to products already live is left out for now (it needs a saved copy of the last publish, e.g. a hidden tab).
 - 2026-11-02 – Added change logging after all (your choice): each successful publish saves what the site shows in a hidden '_Site Snapshot' tab, and the next publish logs the products added, removed and changed (number, name, image, category, Shopee link) since then. No database needed.
 - 2026-11-02 – 1.8 re-scoped (your approval): done with Shopee's approval plus the Instagram and Threads bio links; the TikTok bio link moved to 'Later' because TikTok needs 1,000 followers or a business account for a website link. Shopee approval risk closed. Phase 1 complete.
+- 2026-11-02 – Shopee confirmed product images may be shown on your own site (your report); images risk closed. Phase 1 gate passed (docs uploaded to the Project); Phase 2 started.

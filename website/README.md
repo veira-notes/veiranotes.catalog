@@ -86,6 +86,6 @@ Source:
 - **Branding:** no Shopee name, trademark or logo on the site. The button says "View product".
 - **Still to confirm with Shopee support:** how to get the website approved as a promotion channel (needed before PRD 1.8), and whether affiliates may show product images on their own website. If the answer on images is no, fall back to your own photos or no images.
 
-**Update 2 November 2026 (PRD 1.8):** Shopee approved https://veiranotes.pages.dev as a promotion channel (your report). The site is linked in the Instagram and Threads bios; the TikTok bio link waits until the account has 1,000 followers or a business account. Shopee's answer on showing product images on your own site isn't recorded here yet; the PRD risk stays open until it is.
+**Update 2 November 2026 (PRD 1.8):** Shopee approved https://veiranotes.pages.dev as a promotion channel (your report). The site is linked in the Instagram and Threads bios; the TikTok bio link waits until the account has 1,000 followers or a business account. Shopee also confirmed that showing product images on your own site is allowed (your report), so the images risk is closed. The site keeps using Shopee's own image links, with no scraping or copies.
 
 **Status:** 1.2 closed on 29 October 2026. The open Shopee questions are tracked in PRD 1.8 and the Risks list.
