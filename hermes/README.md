@@ -2,11 +2,29 @@
 
 Central AI agent for agent-driven tasks and coordination. Setup steps are in PRD Phase 3.
 
-## Current install (found 29 October 2026)
+## Current install (updated 3 November 2026, PRD 3.1)
 
-- Hermes Agent CLI v0.18.0, installed in `C:\Users\jefersono\AppData\Local\hermes` (before this plan). It bundles its own Node.js, Git and Python 3.11.
-- Hermes Desktop: an earlier install attempt failed; checked in PRD 3.1.
-- Bundled `claude-code` skill: version 2.2.0, at `hermes-agent\skills\autonomous-ai-agents\claude-code\SKILL.md`; it lists Windows as a supported platform.
+- **Hermes Agent v0.22.6** (stable channel), code in `C:\Users\jefersono\AppData\Local\hermes\hermes-agent`, launcher `hermes.exe` in `...\hermes\bin` (on the user PATH). Data (settings, `.env`, memories, sessions, skills, profiles) stays in `C:\Users\jefersono\AppData\Local\hermes`.
+- **Hermes Desktop**, built on this PC: `...\hermes\hermes-agent\apps\desktop\release\win-unpacked\Hermes.exe`. Open it with `hermes desktop --skip-build` (or `hermes desktop` to rebuild after an update).
+- The previous v0.18.0 code is kept as `...\hermes\hermes-agent.old-v0.18` until Phase 3 is done; then it can be deleted.
+- Profiles: `default` and `fctg-ph` (pre-existing; uses a local model on another machine). Neither was changed in 3.1.
+- Bundled `claude-code` skill updated by the installer (lists Windows as supported).
+
+### Why the official Windows installer isn't used (3 November 2026)
+
+- The Hermes Desktop package for Windows is an `.appinstaller`/MSIX file, installed through Windows App Installer. Company policy on this PC (`HKLM\SOFTWARE\Policies\Microsoft\Windows\AppInstaller`) sets `EnableAppInstaller = 0`, which blocks the Windows Package Manager (winget), and `EnableMSAppInstallerProtocol = 0`, which blocks installing packages straight from websites. Opening a downloaded `.appinstaller` file by hand was not tested; the route below avoids the question.
+- The Hermes-Setup bootstrap (tried 28 and 29 October) failed at the `venv` stage: it kept the old v0.18.0 code, which isn't linked to the release history, then looked for `pm\lock.json`, which only newer versions have.
+- What worked: rename the old code folder, run the official command-line installer (`install.ps1` from hermes-agent.nousresearch.com, `-NonInteractive`), then `hermes desktop --build-only` and `hermes desktop --skip-build`.
+- The installer couldn't refresh the optional computer-use driver (needs administrator approval): `hermes computer-use install --upgrade` in an interactive terminal, only if you want Hermes to control the mouse and keyboard.
+
+### Health check after the install
+
+`hermes doctor` on 3 November 2026: no errors (✗). It lists 6 issues to address, none blocking:
+- missing API keys for optional tools (`hermes setup`; OpenRouter comes in PRD 3.2);
+- two old `custom_providers` entries (local models on other machines) that should move into `config.yaml` `providers:`;
+- known npm vulnerabilities in Hermes' build tools, to be fixed upstream ("wait for an upstream lockfile fix, then update").
+
+Sources: [Hermes installation guide](https://hermes-agent.nousresearch.com/docs/getting-started/installation), [Hermes docs home](https://hermes-agent.nousresearch.com/docs/), [App Installer policy (Microsoft Learn)](https://learn.microsoft.com/en-us/windows/client-management/mdm/policy-csp-desktopappinstaller).
 
 ## May Hermes run my Claude Code CLI on my subscription? (PRD 2.1, checked 2 November 2026)
 

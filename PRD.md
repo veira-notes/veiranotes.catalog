@@ -1,7 +1,7 @@
 # Automated Shopee Affiliate Marketing Ecosystem – PRD
 
 ## 1. Status
-**Status:** Approved · **Current:** Phase 2 complete · 🔒 Gate: approval before Phase 3 · **Updated:** 2026-11-03
+**Status:** Approved · **Current:** Phase 3.1 (in progress) · **Updated:** 2026-11-03
 Catalogue website online first, then the core automation tools → see PROJECT_CONTEXT.md
 **Now:** The project folder is set up (2026-10-24). Claude Code CLI is installed, and it loads CLAUDE.md, PROJECT_CONTEXT.md and PRD.md at session start (1.1, 2026-10-28). The Shopee Affiliate account is approved and active. Hosting and Shopee rules checked (1.2, 2026-10-29). The private product sheet exists and a Google service account can read it (1.3, 2026-10-29). The Astro site (7.4.4) is scaffolded in `website/` and reads the sheet locally (1.4, 2026-10-29), and the veiranotes catalogue design is built and approved (1.5, 2026-10-29); Node.js 24.22.2 LTS is installed in `AppData\Local\Programs\nodejs`, ahead of Hermes' bundled Node on the user PATH. Hermes Agent CLI (v0.18.0) was already installed before this plan; the Hermes Desktop install failed and is checked in Phase 3. The website is live at https://veiranotes.pages.dev, built by Cloudflare Pages from the private GitHub repo `veira-notes/veiranotes.catalog` (1.6, 2026-10-30). The 'Publish site' button works (1.7, 2026-11-02): the sheet now holds 17 live products, and the script logs each step, writes Published On with the time, and logs what was added, changed and removed since the last publish (hidden '_Site Snapshot' tab). Shopee approved the site, and it is linked in your Instagram and Threads bios (1.8, 2026-11-02). Phase 2 checks done: Hermes may run your Claude Code CLI on your subscription for personal use (2.1), and Shopee's Affiliate Open API needs approval you don't have yet, so links stay manual (2.2). Hermes Desktop, n8n and the tunnel are not set up yet.
 
@@ -32,7 +32,7 @@ Goal: Answer the two questions that could change the automation plan, before ins
 
 ### Phase 3 – Hermes Desktop + Claude Code
 Goal: Hermes runs in the desktop app on a free model and can hand a task to Claude Code. · Depends on: 2.1 · Covers: R3, R4 · Est: ~1 day
-- [ ] 3.1 Install Hermes Desktop with its Windows installer (it installs Hermes Agent too) – done when: the app opens and `hermes doctor` reports no errors. Undo: uninstall Hermes Desktop and remove its data folder.
+- [ ] 3.1 Update Hermes Agent with the official command-line installer (fresh code checkout; your data folder is kept), then build and open Hermes Desktop with `hermes desktop`. The Windows installer package (.appinstaller/MSIX) depends on App Installer features that company policy restricts here (winget and web installs are turned off), and the Hermes-Setup bootstrap failed on the old v0.18.0 code – done when: the app opens and `hermes doctor` reports no errors (✗); warnings about optional add-ons and API keys don't count. Undo: delete the new `hermes-agent` folder and rename `hermes-agent.old-v0.18` back to `hermes-agent`.
 - [ ] 3.2 Connect OpenRouter (free account, free model) in the app – done when: a test chat gets a reply from a free model, and the OpenRouter key lives only in Hermes' own config, not in project notes.
 - [ ] 3.3 Basic agent task – done when: Hermes uses a tool to create a test file in `hermes/` and reports what it did.
 - [ ] 3.4 Claude Code via Hermes – done when: Hermes runs a small Claude Code task through its claude-code skill, and the usage counts against your Claude plan with no paid extra usage.
@@ -73,10 +73,10 @@ Goal: Know what each service allows before building automation. · Depends on: 2
 - **[Risk]** OpenRouter free models have usage limits and uneven tool-use quality → mitigation: tested in 3.2–3.3; fallback: Gemini free tier · blocks Phase 3
 - **[Risk]** Shopee's Affiliate Open API exists for Indonesia (links, product offers, reports), but access is by approval with no public way to apply, and your account has no access yet (2.2) → mitigation: ask Shopee Affiliate support how to request access; manual links in the sheet keep working; no unofficial scrapers (terms clause 6.3(i)) · affects later milestones
 - **[Risk]** Webhooks and scheduled jobs only work while this PC is on (the website doesn't depend on it) → acceptable for this milestone; long-term host is in 'Later'
-- **[Assumption]** Hermes, installed on Windows by the desktop installer, can run your Windows Claude Code CLI; fallback: run both in WSL2 · confirm in 3.4
+- **[Assumption]** Hermes, installed on Windows by the command-line installer, can run your Windows Claude Code CLI; fallback: run both in WSL2 · confirm in 3.4
 
 ## 5. Next action
-Phase 2 gate: upload PRD.md and PROJECT_CONTEXT.md to the claude.ai Project so both copies match, then approve Phase 3 (3.1: install Hermes Desktop; first find out why the earlier install failed). Optional, any time: ask Shopee Affiliate support how to request Open API access.
+3.1 in progress: install Hermes Desktop (first find out why the earlier install failed). Optional, any time: ask Shopee Affiliate support how to request Open API access.
 
 ## 6. Change log
 - 2026-10-26 – PRD created from the old PROJECT_CONTEXT.md Phase 1 checklist. Nothing ticked, because no item has been verified yet.
@@ -97,4 +97,5 @@ Phase 2 gate: upload PRD.md and PROJECT_CONTEXT.md to the claude.ai Project so b
 - 2026-11-02 – Added change logging after all (your choice): each successful publish saves what the site shows in a hidden '_Site Snapshot' tab, and the next publish logs the products added, removed and changed (number, name, image, category, Shopee link) since then. No database needed.
 - 2026-11-02 – 1.8 re-scoped (your approval): done with Shopee's approval plus the Instagram and Threads bio links; the TikTok bio link moved to 'Later' because TikTok needs 1,000 followers or a business account for a website link. Shopee approval risk closed. Phase 1 complete.
 - 2026-11-02 – Shopee confirmed product images may be shown on your own site (your report); images risk closed. Phase 1 gate passed (docs uploaded to the Project); Phase 2 started.
+- 2026-11-03 – 3.1 changed (your approval): the Windows Desktop package relies on App Installer, which company policy restricts on this PC (winget and web installs off), and Hermes-Setup failed on the old v0.18.0 code (missing `pm\lock.json`). Route now: rename the old code folder, run the official command-line installer, then `hermes desktop` builds the app locally. 'No errors' means no ✗ in `hermes doctor`. Claude subscription login (OAuth) inside Hermes is not used: Anthropic doesn't permit third-party apps to use Claude.ai login; Claude stays reachable through Claude Code (3.4).
 - 2026-11-03 – Phase 2 complete. 2.1: yes, with rules in `hermes/README.md`. 2.2: the Shopee Affiliate Open API exists for Indonesia but needs approval you don't have yet; the Shopee API risk was updated, and links stay manual. No change to later phases.
