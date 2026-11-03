@@ -46,7 +46,14 @@ Affiliate Automation/
 │   ├── README.md          # n8n install, persistence, tunnel/webhook notes
 │   └── workflows/         # Exported workflow JSON (credentials stripped)
 ├── website/
-│   └── README.md          # Catalogue site stack, hosting, product sheet and update flow
+│   ├── README.md          # Catalogue site stack, hosting, product sheet and update flow
+│   ├── DESIGN_BRIEF.md    # Approved design brief for the catalogue page
+│   ├── apps-script/
+│   │   └── Code.gs        # Reference copy of the sheet's 'Publish site' script (no secrets)
+│   ├── src/               # Astro site: pages/index.astro, lib/sheet.ts, lib/site.ts, styles/theme.css
+│   ├── public/            # Logo and favicon
+│   ├── .env.example       # Build settings template (.env itself is git-ignored)
+│   └── package.json       # Astro 7.4.4, fonts, icons; Node version in .node-version
 ├── integrations/
 │   └── README.md          # What each service allows: Shopee, socials, Hermes ↔ n8n
 ├── docs/
