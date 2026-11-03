@@ -26,6 +26,36 @@ Central AI agent for agent-driven tasks and coordination. Setup steps are in PRD
 
 Sources: [Hermes installation guide](https://hermes-agent.nousresearch.com/docs/getting-started/installation), [Hermes docs home](https://hermes-agent.nousresearch.com/docs/), [App Installer policy (Microsoft Learn)](https://learn.microsoft.com/en-us/windows/client-management/mdm/policy-csp-desktopappinstaller).
 
+## veiranotes profile and OpenRouter (PRD 3.2, 3 November 2026)
+
+- **Profile:** `veiranotes`, created fresh (not cloned), at `AppData\Local\hermes\profiles\veiranotes`. Use it with `hermes -p veiranotes …`, the `veiranotes` wrapper command, or by selecting it in Hermes Desktop. The `default` and `fctg-ph` profiles are unchanged.
+- **Model:** OpenRouter `nvidia/nemotron-3-ultra-550b-a55b:free` (your choice). Backup if it's down: `nvidia/nemotron-3.5-super-vl:free` (switch with `/model` in Desktop).
+- **Key:** `OPENROUTER_API_KEY` is only in the profile's own `.env` (added by you in Hermes). Checked 3 November 2026: no OpenRouter key in any project file or in git history.
+- **SOUL:** `profiles\veiranotes\SOUL.md` sets the identity, voice and ground rules (USD 0, no secrets, no Claude login, ask before outward actions, Shopee terms, honesty, privacy). Project details belong in an `AGENTS.md` later, as Hermes' docs recommend.
+- **Free limits:** 20 requests a minute; 50 a day without ever buying credits (1,000 a day after buying USD 10 of credits once, which is out of scope). Each Hermes task uses several requests.
+- **Test (3 November 2026):** 6 free tool-capable models did one small tool task through the veiranotes profile (read a file, reply with its first line):
+
+  | Model | Correct, using a tool | Time |
+  |---|---|---|
+  | thinkingmachines/inkling-small:free | ✓ | 36.9 s |
+  | dots-studio/dots-3-note-preview:free | ✓ | 39.9 s |
+  | nvidia/nemotron-3.5-super-vl:free | ✓ | 43.1 s |
+  | nvidia/nemotron-3-ultra-550b-a55b:free | ✓ | 43.7 s |
+  | nvidia/nemotron-3.5-lightning:free | ✓ | 45.6 s |
+  | google/gemma-4-31b-it:free | ✗ (rate-limited) | – |
+
+  Times include about 9 s of Hermes start-up and at least two model calls; one run each, so speeds are roughly a tie. OpenRouter publishes no speed figures for free models; at test time `thinkingmachines/inkling` and `recursive/flint` were down (0% uptime over 30 minutes).
+
+### Fallback options (noted, not evaluated)
+
+Only if OpenRouter's free models stop being enough. Each needs a full check (cost, terms, security) before use:
+- **9Router** – a free, open-source local proxy that routes AI coding tools to many providers and falls back to another model when one's quota runs out. The software is free, but each provider behind it has its own limits or costs. Don't route your Claude subscription through it: Anthropic doesn't permit third-party tools to use Claude.ai login (see the section below). Sources: [9Router docs](https://docs.9router.com/), [9Router on EveryDev](https://www.everydev.ai/tools/9router).
+- **Command Code** – a terminal coding agent by Langbase (npm package `command-code`), released March 2026. Proprietary and freemium: USD 10 of free credits, then paid plans; a Command Code account is required. Claude models there need your own Anthropic API key (paid). Source: [Command Code on Terminal Trove](https://terminaltrove.com/ai-coding-agents/commandcode/).
+
+### Open item: Claude login copied into the default profile
+
+On 3 November 2026 the `default` profile's credential store (`auth.json`) held an Anthropic credential with `auth_type: oauth`, `source: claude_code`: a copy of Claude Code's sign-in, probably picked up when Hermes Desktop first opened. It had 0 requests. Anthropic doesn't permit third-party apps to store or use Claude.ai login, so the recommendation is to remove it (`hermes auth remove`). You chose to leave it for now. The `veiranotes` profile has no copy of it.
+
 ## May Hermes run my Claude Code CLI on my subscription? (PRD 2.1, checked 2 November 2026)
 
 **Answer: yes, for your own personal use on your own PC, as long as Claude Code keeps its own sign-in and you don't pay for extra usage.**
