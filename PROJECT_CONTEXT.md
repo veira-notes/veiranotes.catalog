@@ -1,5 +1,5 @@
 # Automated Shopee Affiliate Marketing Ecosystem – Project Context
-_Last updated: 2026-11-02 · Plan: see PRD.md_
+_Last updated: 2026-11-03 · Plan: see PRD.md_
 
 ## 1. Summary
 A personal, AI-assisted affiliate system centred on Shopee. It finds products, manages affiliate links, writes marketing content and publishes it to Threads, X, Instagram, TikTok, Shopee and a catalogue website, with as little manual work as possible. The current milestone puts the catalogue website online first, so selling can start, then sets up the automation tools.
@@ -29,8 +29,8 @@ Goal of the current milestone: the catalogue website is live and selling, and th
 - **R7** – Before any automation is built, notes record what each service allows: Shopee Affiliate (Indonesia), the social platforms, Hermes ↔ n8n and n8n ↔ product sheet. Notes and research only; no working connections.
 
 ## 5. Environment
-- **Tools / stack:** Windows (x64) · Claude Code CLI installed · Shopee Affiliate (Indonesia) account approved and active · website, Hermes, n8n and tunnel are planned in PRD.md (Approach) and get recorded here once set up.
-- **Hosting:** Website on a free host (planned in PRD.md); Hermes and n8n on this Windows PC; the long-term n8n host is in 'Later'.
+- **Tools / stack:** Windows (x64) · Claude Code CLI installed · Shopee Affiliate (Indonesia) account approved and active, website approved as a promotion channel (no Open API access yet) · Website: Astro 7 static site in `website/`, reading the private 'Product Sheet' tab through a Google service account, with a 'Publish site' Apps Script button in the sheet; code in the private GitHub repo `veira-notes/veiranotes.catalog` · Node.js 24 LTS (separate from Hermes' bundled Node) · Hermes Agent CLI v0.18.0 installed (Hermes Desktop not yet) · n8n and the tunnel are planned in PRD.md and get recorded here once set up.
+- **Hosting:** Website live at https://veiranotes.pages.dev on Cloudflare Pages' free plan; Hermes and n8n on this Windows PC; the long-term n8n host is in 'Later'.
 - **Local folder:** `C:\Users\jefersono\Documents\Personal\Affiliate Automation`
 - **Folder structure:**
 ```
@@ -84,4 +84,6 @@ Affiliate Automation/
 | 2026-10-30 | The robot key is an encrypted Cloudflare secret; every push to `main` rebuilds the site | Encrypted secrets do reach the Pages build, so the key never needs to be stored in plain text. |
 | 2026-11-02 | The publish script keeps its memory of the last publish in a hidden '_Site Snapshot' tab of the workbook | Lets each publish log what was added, changed and removed without a database or paid service. |
 | 2026-11-02 | The site is linked from the Instagram and Threads bios now; the TikTok bio link waits until the account qualifies | TikTok only allows a website link with 1,000 followers or a business account (per third-party guides). |
+| 2026-11-02 | Hermes runs Claude Code only through your own signed-in, unmodified `claude` CLI, for personal use, with no API key and extra usage off | Anthropic permits this on a subscription (checked in 2.1); other routes risk paid usage or breaking the terms. |
+| 2026-11-02 | Affiliate links and product data stay manual until Shopee grants Open API access; no unofficial scrapers | The Open API needs per-affiliate approval (2.2), and Shopee's terms ban automated extraction (clause 6.3(i)). |
 | 2026-10-29 | The Status column drives publishing: the button shows 'Published' and 'Need to Publish' products, removes 'Archived' ones, and marks 'Need to Publish' as 'Published' after a successful build | One button press keeps the site and the sheet in step. |
