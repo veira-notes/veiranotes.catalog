@@ -1,4 +1,4 @@
-﻿# Automated Shopee Affiliate Marketing Ecosystem â€“ Project Context
+# Automated Shopee Affiliate Marketing Ecosystem â€“ Project Context
 _Last updated: 2026-11-03 Â· Plan: see PRD.md_
 
 ## 1. Summary
