@@ -41,7 +41,8 @@ Affiliate Automation/
 ├── PRD.md                 # Plan, phases and status (copy of the claude.ai Project doc)
 ├── .gitignore             # Excludes .env/keys, n8n local data, website build output
 ├── hermes/
-│   └── README.md          # Hermes Desktop + Claude Code setup notes and findings
+│   ├── README.md          # Hermes Desktop + Claude Code setup notes and findings
+│   └── CLAUDE_CODE_DELEGATION.md  # How to hand work from Hermes to Claude Code
 ├── n8n/
 │   ├── README.md          # n8n install, persistence, tunnel/webhook notes
 │   └── workflows/         # Exported workflow JSON (credentials stripped)
@@ -94,4 +95,5 @@ Affiliate Automation/
 | 2026-11-02 | Hermes runs Claude Code only through your own signed-in, unmodified `claude` CLI, for personal use, with no API key and extra usage off | Anthropic permits this on a subscription (checked in 2.1); other routes risk paid usage or breaking the terms. |
 | 2026-11-02 | Affiliate links and product data stay manual until Shopee grants Open API access; no unofficial scrapers | The Open API needs per-affiliate approval (2.2), and Shopee's terms ban automated extraction (clause 6.3(i)). |
 | 2026-11-03 | This project runs in its own Hermes profile, `veiranotes`, on OpenRouter's free `nvidia/nemotron-3-ultra-550b-a55b:free`, with its own SOUL | Keeps the project apart from your other Hermes profiles; the model got a tool task right with 100% uptime, and speeds of free models were roughly a tie. |
+| 2026-11-12 | Until you buy a personal Claude plan, Hermes' Claude Code tasks run on the Claude Code login already on this PC, which belongs to your work organisation ('ATI Business Group') | Your choice, to finish 3.4 now; switch Hermes to a separate personal login once you have your own Pro/Max plan. |
 | 2026-10-29 | The Status column drives publishing: the button shows 'Published' and 'Need to Publish' products, removes 'Archived' ones, and marks 'Need to Publish' as 'Published' after a successful build | One button press keeps the site and the sheet in step. |
