@@ -1,5 +1,5 @@
-# Automated Shopee Affiliate Marketing Ecosystem – Project Context
-_Last updated: 2026-11-03 · Plan: see PRD.md_
+﻿# Automated Shopee Affiliate Marketing Ecosystem â€“ Project Context
+_Last updated: 2026-11-03 Â· Plan: see PRD.md_
 
 ## 1. Summary
 A personal, AI-assisted affiliate system centred on Shopee. It finds products, manages affiliate links, writes marketing content and publishes it to Threads, X, Instagram, TikTok, Shopee and a catalogue website, with as little manual work as possible. The current milestone puts the catalogue website online first, so selling can start, then sets up the automation tools.
@@ -17,53 +17,53 @@ Goal of the current milestone: the catalogue website is live and selling, and th
 - **In:** Catalogue website live on a free address, with products added by hand in a Google Sheet; Hermes Desktop and Claude Code access; self-hosted n8n on this PC; secure HTTPS webhooks; integration research (notes only).
 - **Out:** Scaling (high traffic, speed tuning); anything that needs a paid service.
 - **Later:** TikTok bio link to the site (once the account has 1,000 followers or is a business account); custom domain (adds a yearly cost); automated product discovery; content generation workflows; social media auto-posting; n8n adding products to the sheet; long-term n8n host (always-on PC vs. VPS).
-- **Constraints:** $0/month (free tiers only) · Claude via Pro/Max subscription only, no API key · Windows x64 PC · website in English · no secrets in docs or the repo.
+- **Constraints:** $0/month (free tiers only) Â· Claude via Pro/Max subscription only, no API key Â· Windows x64 PC Â· website in English Â· no secrets in docs or the repo.
 
 ## 4. Requirements
-- **R1** – The catalogue website is live on a free address, in English, works well on phones, and each product links to Shopee through your affiliate link.
-- **R2** – You add products by hand in a Google Sheet, and the site updates from it without code changes.
-- **R3** – Hermes Agent runs on the Windows PC through Hermes Desktop and completes a basic agent task.
-- **R4** – Hermes can use Claude Code through a method Anthropic currently permits, at no extra cost.
-- **R5** – n8n Community Edition is self-hosted with persistent data and a secured owner account.
-- **R6** – n8n webhooks are reachable from the internet over HTTPS, with access secured.
-- **R7** – Before any automation is built, notes record what each service allows: Shopee Affiliate (Indonesia), the social platforms, Hermes ↔ n8n and n8n ↔ product sheet. Notes and research only; no working connections.
+- **R1** â€“ The catalogue website is live on a free address, in English, works well on phones, and each product links to Shopee through your affiliate link.
+- **R2** â€“ You add products by hand in a Google Sheet, and the site updates from it without code changes.
+- **R3** â€“ Hermes Agent runs on the Windows PC through Hermes Desktop and completes a basic agent task.
+- **R4** â€“ Hermes can use Claude Code through a method Anthropic currently permits, at no extra cost.
+- **R5** â€“ n8n Community Edition is self-hosted with persistent data and a secured owner account.
+- **R6** â€“ n8n webhooks are reachable from the internet over HTTPS, with access secured.
+- **R7** â€“ Before any automation is built, notes record what each service allows: Shopee Affiliate (Indonesia), the social platforms, Hermes â†” n8n and n8n â†” product sheet. Notes and research only; no working connections.
 
 ## 5. Environment
-- **Tools / stack:** Windows (x64) · Claude Code CLI installed · Shopee Affiliate (Indonesia) account approved and active, website approved as a promotion channel (no Open API access yet) · Website: Astro 7 static site in `website/`, reading the private 'Product Sheet' tab through a Google service account, with a 'Publish site' Apps Script button in the sheet; code in the private GitHub repo `veira-notes/veiranotes.catalog` · Node.js 24 LTS (separate from Hermes' bundled Node) · Hermes Agent v0.22.6 with Hermes Desktop built locally (`hermes desktop`; the Windows package route is restricted by company policy); project profile `veiranotes` on OpenRouter's free `nvidia/nemotron-3-ultra-550b-a55b:free` · n8n and the tunnel are planned in PRD.md and get recorded here once set up.
+- **Tools / stack:** Windows (x64) Â· Claude Code CLI installed Â· Shopee Affiliate (Indonesia) account approved and active, website approved as a promotion channel (no Open API access yet) Â· Website: Astro 7 static site in `website/`, reading the private 'Product Sheet' tab through a Google service account, with a 'Publish site' Apps Script button in the sheet; code in the private GitHub repo `veira-notes/veiranotes.catalog` Â· Node.js 24 LTS (separate from Hermes' bundled Node) Â· Hermes Agent v0.22.6 with Hermes Desktop built locally (`hermes desktop`; the Windows package route is restricted by company policy); project profile `veiranotes` on OpenRouter's free `nvidia/nemotron-3-ultra-550b-a55b:free` Â· n8n and the tunnel are planned in PRD.md and get recorded here once set up.
 - **Hosting:** Website live at https://veiranotes.pages.dev on Cloudflare Pages' free plan; Hermes and n8n on this Windows PC; the long-term n8n host is in 'Later'.
 - **Local folder:** `C:\Users\jefersono\Documents\Personal\Affiliate Automation`
 - **Folder structure:**
 ```
 Affiliate Automation/
-├── README.md              # Entry point: folder map and conventions
-├── CLAUDE.md              # Read by Claude Code at every session start; points to the two docs below
-├── PROJECT_CONTEXT.md     # This document (copy of the claude.ai Project doc)
-├── PRD.md                 # Plan, phases and status (copy of the claude.ai Project doc)
-├── .gitignore             # Excludes .env/keys, n8n local data, website build output
-├── hermes/
-│   ├── README.md          # Hermes Desktop + Claude Code setup notes and findings
-│   └── CLAUDE_CODE_DELEGATION.md  # How to hand work from Hermes to Claude Code
-├── n8n/
-│   ├── README.md          # n8n install, persistence, tunnel/webhook notes
-│   └── workflows/         # Exported workflow JSON (credentials stripped)
-├── website/
-│   ├── README.md          # Catalogue site stack, hosting, product sheet and update flow
-│   ├── DESIGN_BRIEF.md    # Approved design brief for the catalogue page
-│   ├── apps-script/
-│   │   └── Code.gs        # Reference copy of the sheet's 'Publish site' script (no secrets)
-│   ├── src/               # Astro site: pages/index.astro, lib/sheet.ts, lib/site.ts, styles/theme.css
-│   ├── public/            # Logo and favicon
-│   ├── .env.example       # Build settings template (.env itself is git-ignored)
-│   └── package.json       # Astro 7.4.4, fonts, icons; Node version in .node-version
-├── integrations/
-│   └── README.md          # What each service allows: Shopee, socials, Hermes ↔ n8n
-├── docs/
-│   └── README.md          # Setup logs and research notes (YYYY-MM-DD-topic.md)
-└── memory/                # Read-only snapshot of Claude's project memory
-    ├── README.md          # Export date, sync direction, how to update
-    ├── index.md
-    └── areas/
-        └── shopee-affiliate-ecosystem.md
+â”œâ”€â”€ README.md              # Entry point: folder map and conventions
+â”œâ”€â”€ CLAUDE.md              # Read by Claude Code at every session start; points to the two docs below
+â”œâ”€â”€ PROJECT_CONTEXT.md     # This document (copy of the claude.ai Project doc)
+â”œâ”€â”€ PRD.md                 # Plan, phases and status (copy of the claude.ai Project doc)
+â”œâ”€â”€ .gitignore             # Excludes .env/keys, n8n local data, website build output
+â”œâ”€â”€ hermes/
+â”‚   â”œâ”€â”€ README.md          # Hermes Desktop + Claude Code setup notes and findings
+â”‚   â””â”€â”€ CLAUDE_CODE_DELEGATION.md  # How to hand work from Hermes to Claude Code
+â”œâ”€â”€ n8n/
+â”‚   â”œâ”€â”€ README.md          # n8n install, persistence, tunnel/webhook notes
+â”‚   â””â”€â”€ workflows/         # Exported workflow JSON (credentials stripped)
+â”œâ”€â”€ website/
+â”‚   â”œâ”€â”€ README.md          # Catalogue site stack, hosting, product sheet and update flow
+â”‚   â”œâ”€â”€ DESIGN_BRIEF.md    # Approved design brief for the catalogue page
+â”‚   â”œâ”€â”€ apps-script/
+â”‚   â”‚   â””â”€â”€ Code.gs        # Reference copy of the sheet's 'Publish site' script (no secrets)
+â”‚   â”œâ”€â”€ src/               # Astro site: pages/index.astro, lib/sheet.ts, lib/site.ts, styles/theme.css
+â”‚   â”œâ”€â”€ public/            # Logo and favicon
+â”‚   â”œâ”€â”€ .env.example       # Build settings template (.env itself is git-ignored)
+â”‚   â””â”€â”€ package.json       # Astro 7.4.4, fonts, icons; Node version in .node-version
+â”œâ”€â”€ integrations/
+â”‚   â””â”€â”€ README.md          # What each service allows: Shopee, socials, Hermes â†” n8n
+â”œâ”€â”€ docs/
+â”‚   â””â”€â”€ README.md          # Setup logs and research notes (YYYY-MM-DD-topic.md)
+â””â”€â”€ memory/                # Read-only snapshot of Claude's project memory
+    â”œâ”€â”€ README.md          # Export date, sync direction, how to update
+    â”œâ”€â”€ index.md
+    â””â”€â”€ areas/
+        â””â”€â”€ shopee-affiliate-ecosystem.md
 ```
 
 ## 6. Decisions log
