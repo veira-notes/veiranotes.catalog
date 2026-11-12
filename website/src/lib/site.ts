@@ -13,8 +13,8 @@ export const SITE = {
   ],
   logo: "/vn-main-logo.jpeg",
   footerNote: "Thank you for stopping by. May you find the piece that feels like you.",
-  // Days a product keeps its "New" badge after its Published On date.
-  newBadgeDays: 14,
+  // Days a product keeps its "New" badge, counted in exact hours from its Published On date and time.
+  newBadgeDays: 3,
 };
 
 // X is added when the account exists.

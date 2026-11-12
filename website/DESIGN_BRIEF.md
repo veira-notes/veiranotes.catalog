@@ -48,7 +48,7 @@ Premium and elegant, but clean and simple. It should feel feminine, modern and c
 ## 5. Product rules
 - **Order (updated 2 November 2026):** products with the "New" badge come first, most recently published at the top, by Published On date and time (same time: higher number first). All other products follow, by your **No** column, highest first. When a badge expires, that product drops back to its number position without a rebuild.
 - **Product number:** "VN" plus your **No** column, with no space and no leading zeros (e.g. VN1, VN25, VN1859). The Product ID itself isn't shown. A row with an empty or non-numeric No is skipped, and so is a duplicate No.
-- **"New" badge:** shows for 14 days after a product is published. The date comes from a new **Published On** column, which the publish button fills in (PRD 1.7). Until 1.7 is set up, no badges show.
+- **"New" badge (updated 12 November 2026):** shows for 3 days, exactly 72 hours from the product's Published On date and time (Jakarta time). The publish button fills in Published On (PRD 1.7). The number of days is set in the code: `newBadgeDays` in `src/lib/site.ts`.
 - **Not shown:** price, category (except in the tabs), short description, Product ID, Status, and any test or debug text.
 - **Missing or broken image:** a soft placeholder with a "v" monogram. This shows when Image URL is empty, or when both Shopee's thumbnail and the pasted link fail to load (for example, the seller removed the photo).
 - **No results:** "No products match your search", with a button to clear it.

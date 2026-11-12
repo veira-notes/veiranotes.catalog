@@ -161,18 +161,19 @@ const year = new Date().getFullYear();
       const toTop = document.getElementById("to-top")!;
       let category = "";
 
-      // Show "New" for products published within the last few days, counted from today,
-      // and move them to the top: most recently published first, then higher number.
+      // Show "New" for products published within the last few days, counted in exact hours
+      // from the publish time, and move them to the top: most recently published first, then higher number.
       // The rest keep the build order (number, highest first).
       const list = document.getElementById("list")!;
       const newDays = Number(list.dataset.newDays);
       const fresh: HTMLLIElement[] = [];
       const rest: HTMLLIElement[] = [];
       for (const li of items) {
-        // data-published is "yyyy-mm-dd hh:mm": the day sets the badge, the full time sets the order.
-        const day = li.dataset.published?.slice(0, 10);
+        // data-published is "yyyy-mm-dd hh:mm" in Jakarta time (UTC+7), so the age is the same in every time zone.
+        const published = li.dataset.published;
         const badge = li.querySelector<HTMLElement>(".badge");
-        const age = day ? (Date.now() - new Date(`${day}T00:00:00`).getTime()) / 86_400_000 : -1;
+        const at = published ? new Date(`${published.replace(" ", "T")}:00+07:00`).getTime() : NaN;
+        const age = Number.isNaN(at) ? -1 : (Date.now() - at) / 86_400_000;
         const isNew = !!badge && age >= 0 && age < newDays;
         if (badge) badge.hidden = !isNew;
         (isNew ? fresh : rest).push(li);
