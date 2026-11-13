@@ -43,7 +43,8 @@ The first start took about a minute to set up the database. Later starts are fas
 | `nodes/`, `storage/` | Community nodes and stored files |
 
 **Encryption key:** it lives only in `C:\Users\jefersono\.n8n\config`. Its value is never written in this repo. n8n uses it to encrypt saved credentials. Without it, a copy of the database can't decrypt its credentials. So:
-- copy it into your password manager, as a note named 'n8n encryption key (veiranotes)';
+- keep it in your password manager: it's in the Note of the `localhost:5678` entry in Google Password Manager (personal account), next to the owner login;
+- never share a screenshot of it. If it's ever exposed, change it before any credentials are saved, or treat every saved credential as exposed;
 - never paste it into chat, docs or git;
 - when n8n moves (section 5), give the new install the same key.
 
@@ -93,7 +94,7 @@ At start, n8n 2.47.5 lists settings whose defaults will change. None needs actio
 
 - [x] 4.1 n8n installed with npm
 - [x] 4.2 Fixed data folder, starts at http://localhost:5678, notes here
-- [ ] 4.3 Owner account with a strong password in a password manager
+- [x] 4.3 Owner account with a strong password in a password manager
 - [ ] 4.4 Test workflow survives a stop and start
 
 Phase 5 (tunnel and webhooks) adds its notes here.
