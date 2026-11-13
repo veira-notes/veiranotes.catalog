@@ -26,6 +26,8 @@ const PUBLISHED_ON = 'Published On';
 // Published On is written as yyyy-MM-dd HH:mm in Jakarta time (UTC+7); the site reads it the same way.
 const TIME_ZONE = 'Asia/Jakarta';
 const POLL_MS = 10 * 1000;
+// Status checks that may fail in a row (for example a brief network error) before the run gives up.
+const MAX_FAILED_CHECKS = 5;
 // Google stops any run after 6 minutes, so the whole run must finish well before that.
 const RUN_BUDGET_MS = 4.5 * 60 * 1000;
 // Messages appear as notices in the sheet's corner. Pop-ups (alerts) are not used:
@@ -280,14 +282,32 @@ function waitForDeployment(props, started, knownId, deadline, log) {
   let id = knownId;
   log(id ? 'Build id from the deploy hook: ' + id : 'No build id in the hook reply; looking for the new build.');
   let lastStage = '';
+  let failedChecks = 0;
   while (Date.now() + POLL_MS < deadline) {
     Utilities.sleep(POLL_MS);
+    try {
+      const outcome = checkOnce();
+      failedChecks = 0;
+      if (outcome) return outcome;
+    } catch (e) {
+      // A single failed check (for example Google's "Address unavailable" network error) is
+      // retried at the next poll; only several failures in a row stop the run.
+      failedChecks++;
+      log('Status check ' + failedChecks + ' of ' + MAX_FAILED_CHECKS + ' failed, trying again: ' + e.message);
+      if (failedChecks >= MAX_FAILED_CHECKS) throw e;
+    }
+  }
+  log('Stopped waiting: time budget used (last stage: ' + (lastStage || 'build not found') + ').');
+  return 'timed out';
+
+  // One status check. Returns 'success' or 'failed' when the build has ended, otherwise null.
+  function checkOnce() {
     if (!id) {
       const list = callApi(base);
       const recent = list.find((d) => d.environment === 'production' && new Date(d.created_on).getTime() >= since);
       if (!recent) {
         log('New build not listed yet (newest: ' + (list[0] ? list[0].id + ' created ' + list[0].created_on : 'none') + ').');
-        continue;
+        return null;
       }
       id = recent.id;
       log('Found the new build: ' + id + ' (created ' + recent.created_on + ').');
@@ -298,7 +318,6 @@ function waitForDeployment(props, started, knownId, deadline, log) {
     lastStage = now;
     if (stage.status === 'failure' || stage.status === 'canceled') return 'failed';
     if (stage.name === 'deploy' && stage.status === 'success') return 'success';
+    return null;
   }
-  log('Stopped waiting: time budget used (last stage: ' + (lastStage || 'build not found') + ').');
-  return 'timed out';
 }
