@@ -1,5 +1,5 @@
 # Automated Shopee Affiliate Marketing Ecosystem – Project Context
-_Last updated: 2026-11-12 · Plan: see PRD.md_
+_Last updated: 2026-11-13 · Plan: see PRD.md_
 
 ## 1. Summary
 A personal, AI-assisted affiliate system centred on Shopee. It finds products, manages affiliate links, writes marketing content and publishes it to Threads, X, Instagram, TikTok, Shopee and a catalogue website, with as little manual work as possible. The current milestone puts the catalogue website online first, so selling can start, then sets up the automation tools.
@@ -29,7 +29,7 @@ Goal of the current milestone: the catalogue website is live and selling, and th
 - **R7** – Before any automation is built, notes record what each service allows: Shopee Affiliate (Indonesia), the social platforms, Hermes ↔ n8n and n8n ↔ product sheet. Notes and research only; no working connections.
 
 ## 5. Environment
-- **Tools / stack:** Windows (x64) · Claude Code CLI installed · Shopee Affiliate (Indonesia) account approved and active, website approved as a promotion channel (no Open API access yet) · Website: Astro 7 static site in `website/`, reading the private 'Product Sheet' tab through a Google service account, with a 'Publish site' Apps Script button in the sheet; code in the private GitHub repo `veira-notes/veiranotes.catalog` · Node.js 24 LTS (separate from Hermes' bundled Node) · Hermes Agent v0.22.6 with Hermes Desktop built locally (`hermes desktop`; the Windows package route is restricted by company policy); project profile `veiranotes` on OpenRouter's free `nvidia/nemotron-3-ultra-550b-a55b:free` · n8n and the tunnel are planned in PRD.md and get recorded here once set up.
+- **Tools / stack:** Windows (x64) · Claude Code CLI installed · Shopee Affiliate (Indonesia) account approved and active, website approved as a promotion channel (no Open API access yet) · Website: Astro 7 static site in `website/`, reading the private 'Product Sheet' tab through a Google service account, with a 'Publish site' Apps Script button in the sheet; code in the private GitHub repo `veira-notes/veiranotes.catalog` · Node.js 24 LTS (separate from Hermes' bundled Node) · Hermes Agent v0.22.6 with Hermes Desktop built locally (`hermes desktop`; the Windows package route is restricted by company policy); project profile `veiranotes` on OpenRouter's free `nvidia/nemotron-3-ultra-550b-a55b:free` · n8n Community Edition 2.47.5 on Node.js 24 with npm, started with `n8n/start-n8n.ps1` (data in `C:\Users\jefersono\.n8n`, open to this PC only at http://localhost:5678; start steps in `n8n/README.md`) · the tunnel is planned in PRD.md and gets recorded here once set up.
 - **Hosting:** Website live at https://veiranotes.pages.dev on Cloudflare Pages' free plan; Hermes and n8n on this Windows PC; the long-term n8n host is in 'Later'.
 - **Local folder:** `C:\Users\jefersono\Documents\Personal\Affiliate Automation`
 - **Folder structure:**
@@ -44,7 +44,8 @@ Affiliate Automation/
 │   ├── README.md          # Hermes Desktop + Claude Code setup notes and findings
 │   └── CLAUDE_CODE_DELEGATION.md  # How to hand work from Hermes to Claude Code
 ├── n8n/
-│   ├── README.md          # n8n install, persistence, tunnel/webhook notes
+│   ├── README.md          # n8n install, start/stop steps, data folder, backup, move to Docker
+│   ├── start-n8n.ps1      # Starts n8n with the project's settings (no secrets)
 │   └── workflows/         # Exported workflow JSON (credentials stripped)
 ├── website/
 │   ├── README.md          # Catalogue site stack, hosting, product sheet and update flow

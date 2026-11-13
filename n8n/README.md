@@ -12,13 +12,36 @@ The workflow engine that will connect the project's parts. It runs on this Windo
 
 ## 2. Start and stop (PRD 4.2)
 
-Start, in PowerShell:
+### Start n8n
 
-```powershell
-& "$HOME\Documents\Personal\Affiliate Automation\n8n\start-n8n.ps1"
-```
+1. **Open PowerShell:** press the **Windows key**, type `PowerShell`, and click **Windows PowerShell**. You don't need 'Run as administrator'.
+2. **Paste this line and press Enter.** It works from any folder, because it uses the full path:
+   ```powershell
+   & "$HOME\Documents\Personal\Affiliate Automation\n8n\start-n8n.ps1"
+   ```
+3. **Wait for the ready line.** Wait until the window shows:
+   ```text
+   Editor is now accessible via:
+   http://localhost:5678
+   ```
+   This usually takes 10–30 seconds. Warnings above it ('deprecated', 'will change') are normal (section 6).
+4. **Open n8n:** go to http://localhost:5678 in Chrome and sign in. Chrome fills in the saved login.
+5. **Leave the PowerShell window open.** You can minimise it. n8n runs only while that window is open and the PC is on. Webhooks and schedules don't run while it's closed.
 
-Then open http://localhost:5678. Stop with **Ctrl+C** in that window. n8n only runs while the window is open and the PC is on.
+### Stop n8n
+
+Click the PowerShell window and press **Ctrl+C**. When the prompt (`PS C:\...>`) comes back, n8n has stopped. Closing the window also stops it. Your workflows are saved in the data folder either way.
+
+### If something goes wrong
+
+| What you see | What to do |
+|---|---|
+| `n8n : The term 'n8n' is not recognized` | Node.js or n8n isn't on your PATH. Close PowerShell, open a new window and try again. If it still fails, check with `n8n --version`, and reinstall if needed (section 1). |
+| `running scripts is disabled on this system` | Run it this way instead (allows this one run only, changes no setting): `powershell -ExecutionPolicy Bypass -File "$HOME\Documents\Personal\Affiliate Automation\n8n\start-n8n.ps1"` |
+| `Port 5678 is already in use` or `EADDRINUSE` | n8n is already running, maybe in another window or a Claude Code session. Just open http://localhost:5678, or stop the other copy first. |
+| The page doesn't load | Check the PowerShell window still shows the ready line and no error below it. |
+
+### What the start script does
 
 `start-n8n.ps1` sets these settings (no secrets):
 
@@ -95,7 +118,7 @@ At start, n8n 2.47.5 lists settings whose defaults will change. None needs actio
 - [x] 4.1 n8n installed with npm
 - [x] 4.2 Fixed data folder, starts at http://localhost:5678, notes here
 - [x] 4.3 Owner account with a strong password in a password manager
-- [ ] 4.4 Test workflow survives a stop and start
+- [x] 4.4 Test workflow survives a stop and start
 
 Phase 5 (tunnel and webhooks) adds its notes here.
 
